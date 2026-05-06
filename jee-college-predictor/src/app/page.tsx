@@ -47,6 +47,9 @@ export default function Home() {
         </div>
 
       </section>
+      <section className="container mx-auto px-6 pb-20">
+        <PredictorForm />
+      </section>
     </main>
   );
 }
