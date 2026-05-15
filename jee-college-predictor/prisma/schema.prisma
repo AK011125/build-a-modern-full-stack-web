@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model College {
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  name              String
+  fullName          String
+  type              String
+  city              String
+  state             String
+  nirfRank          Int?
+  feesLpa           Decimal
+  averagePackageLpa Decimal
+  highestPackageLpa Decimal
+  placementRate     Decimal
+  website           String
+  image             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  branches          Branch[]
+  placements        PlacementStat[]
+  cutoffs           Cutoff[]
+
+  @@index([type, state])
+  @@index([nirfRank])
+}
+
+model Branch {
+  id        String  @id @default(cuid())
+  collegeId String
+  name      String
+  degree    String  @default("B.Tech")
+  duration  Int     @default(4)
+  seats     Int?
+
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  cutoffs   Cutoff[]
+
+  @@unique([collegeId, name])
+  @@index([name])
+}
+
+model Cutoff {
+  id          String @id @default(cuid())
+  collegeId   String
+  branchId    String
+  year        Int
+  round       String
+  quota       String
+  seatType    String
+  gender      String
+  openingRank Int?
+  closingRank Int?
+  source      String
+
+  college     College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  branch      Branch  @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@unique([branchId, year, round, quota, seatType, gender])
+  @@index([year, quota, seatType, gender, closingRank])
+  @@index([collegeId, year])
+}
+
+model PlacementStat {
+  id                String  @id @default(cuid())
+  collegeId          String
+  year              Int
+  branchName        String?
+  averagePackageLpa Decimal?
+  medianPackageLpa  Decimal?
+  highestPackageLpa Decimal?
+  placementRate     Decimal?
+  source            String
+
+  college           College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  @@unique([collegeId, year, branchName])
+}
