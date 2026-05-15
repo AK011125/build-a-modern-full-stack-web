@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "import:cutoffs": "node scripts/import-cutoffs.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
